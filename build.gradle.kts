@@ -186,7 +186,7 @@ subprojects {
 				dependsOn(relocateShadowJar)
 				archiveClassifier.set("shaded")
 			}
-			manifest.from(project.tasks.manifest.map { it.outputs.files })
+			manifest.from(project.tasks.manifest.map { it.outputs.files.first() })
 		}
 
 		// compile options
