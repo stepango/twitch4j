@@ -21,6 +21,11 @@ allprojects {
 	}
 
 	tasks {
+		withType<ManifestTask> {
+			outputs.file(File(buildDir, "resources/main/META-INF/MANIFEST.MF"))
+					.withPropertyName("outputFile")
+		}
+
 		withType<Javadoc> {
 			options {
 				this as StandardJavadocDocletOptions
@@ -173,11 +178,6 @@ subprojects {
 		val relocateShadowJar by creating(com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation::class) {
 			target = shadowJar.get()
 			prefix = "com.github.twitch4j.shaded.${"$version".replace(".", "_")}"
-		}
-
-		named("manifest") {
-			outputs.file(File(buildDir, "resources/main/META-INF/MANIFEST.MF"))
-					.withPropertyName("outputFile")
 		}
 
 		// jar artifact id and version
