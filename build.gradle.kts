@@ -197,7 +197,7 @@ subprojects {
 		// javadoc & delombok
 		val delombok by getting(io.freefair.gradle.plugins.lombok.tasks.Delombok::class)
 		javadoc {
-			dependsOn(delombok)
+			dependsOn(delombok, manifest.map { it.outputs })
 			source(delombok)
 			options {
 				title = "${project.name} (v${project.version})"
