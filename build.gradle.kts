@@ -215,7 +215,7 @@ subprojects {
 				title = "${project.name} (v${project.version})"
 				windowTitle = "${project.name} (v${project.version})"
 				encoding = "UTF-8"
-				overview = file("${rootDir}/buildSrc/overview-single.html").path
+				overview = "../overview-single.html"
 				this as StandardJavadocDocletOptions
 				// hide javadoc warnings (a lot from delombok)
 				addStringOption("Xdoclint:none", "-quiet")
