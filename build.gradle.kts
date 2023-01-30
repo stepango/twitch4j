@@ -1,19 +1,29 @@
 import com.coditory.gradle.manifest.ManifestTask
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.freefair.gradle.plugins.lombok.LombokExtension
+import io.freefair.gradle.plugins.lombok.tasks.Delombok
 
 // Plugins
 plugins {
 	signing
 	`java-library`
 	`maven-publish`
-	id("io.freefair.lombok").version("6.6.1")
+	id("io.freefair.lombok").version("6.6.1").apply(false)
 	id("com.coditory.manifest").version("0.2.3").apply(false)
-	id("com.github.johnrengelman.shadow").version("7.1.2")
+	id("com.github.johnrengelman.shadow").version("7.1.2").apply(false)
 }
 
 group = group
 version = version
 
-
+normalization {
+	runtimeClasspath {
+		metaInf {
+			ignoreManifest()
+		}
+	}
+}
 
 // Allprojects
 allprojects {
@@ -31,7 +41,7 @@ subprojects {
 	apply(plugin = "com.coditory.manifest")
 	apply(plugin = "com.github.johnrengelman.shadow")
 
-	lombok {
+	project.extensions.getByType(LombokExtension::class).apply {
 		version.set("1.18.24")
 		disableConfig.set(true)
 	}
@@ -146,14 +156,14 @@ subprojects {
 
 		}
 		// shadowjar & relocation
-		val relocateShadowJar by creating(com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation::class) {
-			target = shadowJar.get()
+		val relocateShadowJar by creating(ConfigureShadowRelocation::class) {
+			target = named<ShadowJar>("shadowJar").get()
 			prefix = "com.github.twitch4j.shaded.${"$version".replace(".", "_")}"
 		}
 
 		// jar artifact id and version
 		withType<Jar> {
-			if (this is com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+			if (this is ShadowJar) {
 				dependsOn(relocateShadowJar)
 				archiveClassifier.set("shaded")
 			}
@@ -197,7 +207,7 @@ subprojects {
 		}
 
 		// javadoc & delombok
-		val delombok by getting(io.freefair.gradle.plugins.lombok.tasks.Delombok::class)
+		val delombok by getting(Delombok::class)
 		javadoc {
 			dependsOn(delombok, named("manifest"))
 			source(delombok)
