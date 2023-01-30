@@ -1,3 +1,5 @@
+import com.coditory.gradle.manifest.ManifestTask
+
 // Plugins
 plugins {
 	signing
@@ -173,14 +175,18 @@ subprojects {
 			prefix = "com.github.twitch4j.shaded.${"$version".replace(".", "_")}"
 		}
 
+		named("manifest") {
+			outputs.file(File(buildDir, "resources/main/META-INF/MANIFEST.MF"))
+					.withPropertyName("outputFile")
+		}
+
 		// jar artifact id and version
 		withType<Jar> {
 			if (this is com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 				dependsOn(relocateShadowJar)
 				archiveClassifier.set("shaded")
 			}
-			dependsOn(project.tasks.manifest)
-			manifest.from(File(buildDir, "resources/main/META-INF/MANIFEST.MF"))
+			manifest.from(project.tasks.manifest.map { it.outputs.files })
 		}
 
 		// compile options
