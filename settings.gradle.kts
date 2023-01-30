@@ -1,5 +1,33 @@
 rootProject.name = "Twitch4J"
 
+plugins {
+	id("com.gradle.enterprise") version("3.12.2")
+	id("com.gradle.common-custom-user-data-gradle-plugin") version("1.8.2")
+}
+
+gradleEnterprise {
+	server = "http://ec2-44-204-208-216.compute-1.amazonaws.com"
+	allowUntrustedServer = true
+	buildScan {
+		publishAlways()
+
+		capture {
+			isTaskInputFiles = true
+		}
+		isUploadInBackground = false
+	}
+
+	buildCache {
+		local {
+			isEnabled = true
+		}
+		remote(gradleEnterprise.buildCache) {
+			isEnabled = false
+		}
+	}
+
+}
+
 include(
 	":common",
 	":auth",
