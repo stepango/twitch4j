@@ -20,10 +20,15 @@ allprojects {
 		mavenCentral()
 	}
 
+	tasks.manifest {
+		outputs.file(File(buildDir, "resources/main/META-INF/MANIFEST.MF"))
+				.withPropertyName("outputFile")
+	}
+
 	tasks {
-		withType<ManifestTask> {
-			outputs.file(File(buildDir, "resources/main/META-INF/MANIFEST.MF"))
-					.withPropertyName("outputFile")
+
+		withType<Jar> {
+			dependsOn(project.tasks.manifest)
 		}
 
 		withType<Javadoc> {
