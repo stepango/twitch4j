@@ -17,14 +17,6 @@ plugins {
 group = group
 version = version
 
-normalization {
-	runtimeClasspath {
-		metaInf {
-			ignoreManifest()
-		}
-	}
-}
-
 // Allprojects
 allprojects {
 	repositories {
@@ -40,6 +32,14 @@ subprojects {
 	apply(plugin = "io.freefair.lombok")
 	apply(plugin = "com.coditory.manifest")
 	apply(plugin = "com.github.johnrengelman.shadow")
+
+	normalization {
+		runtimeClasspath {
+			metaInf {
+				ignoreManifest()
+			}
+		}
+	}
 
 	project.extensions.getByType(LombokExtension::class).apply {
 		version.set("1.18.24")
